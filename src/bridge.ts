@@ -5,12 +5,14 @@ import {
   OutboxToggle as OutboxToggleEvent,
   OwnershipTransferred as OwnershipTransferredEvent
 } from "../generated/Bridge/Bridge"
+
 import {
   BridgeCallTriggered,
   InboxToggle,
   MessageDelivered,
   OutboxToggle,
-  OwnershipTransferred
+  OwnershipTransferred,
+  RetryableTicket,
 } from "../generated/schema"
 
 export function handleBridgeCallTriggered(
@@ -36,8 +38,10 @@ export function handleInboxToggle(event: InboxToggleEvent): void {
 }
 
 export function handleMessageDelivered(event: MessageDeliveredEvent): void {
+  const retryableTxKind = 9
+  const entityId = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   let entity = new MessageDelivered(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+    entityId
   )
   entity.messageIndex = event.params.messageIndex
   entity.beforeInboxAcc = event.params.beforeInboxAcc
@@ -46,6 +50,14 @@ export function handleMessageDelivered(event: MessageDeliveredEvent): void {
   entity.sender = event.params.sender
   entity.messageDataHash = event.params.messageDataHash
   entity.save()
+
+  if (event.params.kind == retryableTxKind) {
+    let retryableTx = new RetryableTicket(entityId)
+    retryableTx.txHash = event.transaction.hash
+    retryableTx.sender = event.params.sender
+    retryableTx.messageDataHash = event.params.messageDataHash
+    retryableTx.save()
+  }
 }
 
 export function handleOutboxToggle(event: OutboxToggleEvent): void {

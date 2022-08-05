@@ -27,6 +27,13 @@ type MessageDelivered @entity {
   messageDataHash: Bytes! # bytes32
 }
 
+type RetryableTicket @entity {
+  id: ID!
+  txHash: Bytes! # bytes32
+  sender: Bytes! # address
+  messageDataHash: Bytes! # bytes32
+}
+
 type OutboxToggle @entity {
   id: ID!
   outbox: Bytes! # address
