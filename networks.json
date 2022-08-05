@@ -2,6 +2,12 @@
   "mainnet": {
     "Inbox": {
       "address": "0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f"
+    },
+    "Bridge": {
+      "address": "0x011B6E24FfB0B5f5fCc564cf4183C5BBBc96D515"
+    },
+    "Outbox": {
+      "address": "0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40"
     }
   }
 }

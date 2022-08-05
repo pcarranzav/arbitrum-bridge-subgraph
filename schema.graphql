@@ -4,3 +4,53 @@ type ExampleEntity @entity {
   messageNum: BigInt! # uint256
   data: Bytes! # bytes
 }
+type BridgeCallTriggered @entity {
+  id: ID!
+  outbox: Bytes! # address
+  destAddr: Bytes! # address
+  amount: BigInt! # uint256
+  data: Bytes! # bytes
+}
+
+type InboxToggle @entity {
+  id: ID!
+  inbox: Bytes! # address
+  enabled: Boolean! # bool
+}
+
+type MessageDelivered @entity {
+  id: ID!
+  messageIndex: BigInt! # uint256
+  beforeInboxAcc: Bytes! # bytes32
+  inbox: Bytes! # address
+  kind: Int! # uint8
+  sender: Bytes! # address
+  messageDataHash: Bytes! # bytes32
+}
+
+type OutboxToggle @entity {
+  id: ID!
+  outbox: Bytes! # address
+  enabled: Boolean! # bool
+}
+
+type OwnershipTransferred @entity {
+  id: ID!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+}
+type OutBoxTransactionExecuted @entity {
+  id: ID!
+  destAddr: Bytes! # address
+  l2Sender: Bytes! # address
+  outboxEntryIndex: BigInt! # uint256
+  transactionIndex: BigInt! # uint256
+}
+
+type OutboxEntryCreated @entity {
+  id: ID!
+  batchNum: BigInt! # uint256
+  outboxEntryIndex: BigInt! # uint256
+  outputRoot: Bytes! # bytes32
+  numInBatch: BigInt! # uint256
+}

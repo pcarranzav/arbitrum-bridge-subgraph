@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.4
 schema:
   file: ./schema.graphql
 dataSources:
@@ -10,7 +10,7 @@ dataSources:
       abi: Inbox
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - InboxMessageDelivered
@@ -33,3 +33,56 @@ dataSources:
         - event: WhitelistSourceUpdated(address)
           handler: handleWhitelistSourceUpdated
       file: ./src/inbox.ts
+  - kind: ethereum
+    name: Bridge
+    network: mainnet
+    source:
+      address: "0x011B6E24FfB0B5f5fCc564cf4183C5BBBc96D515"
+      abi: Bridge
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - BridgeCallTriggered
+        - InboxToggle
+        - MessageDelivered
+        - OutboxToggle
+        - OwnershipTransferred
+      abis:
+        - name: Bridge
+          file: ./abis/Bridge.json
+      eventHandlers:
+        - event: BridgeCallTriggered(indexed address,indexed address,uint256,bytes)
+          handler: handleBridgeCallTriggered
+        - event: InboxToggle(indexed address,bool)
+          handler: handleInboxToggle
+        - event: MessageDelivered(indexed uint256,indexed bytes32,address,uint8,address,bytes32)
+          handler: handleMessageDelivered
+        - event: OutboxToggle(indexed address,bool)
+          handler: handleOutboxToggle
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/bridge.ts
+  - kind: ethereum
+    name: Outbox
+    network: mainnet
+    source:
+      address: "0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40"
+      abi: Outbox
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - OutBoxTransactionExecuted
+        - OutboxEntryCreated
+      abis:
+        - name: Outbox
+          file: ./abis/Outbox.json
+      eventHandlers:
+        - event: OutBoxTransactionExecuted(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleOutBoxTransactionExecuted
+        - event: OutboxEntryCreated(indexed uint256,uint256,bytes32,uint256)
+          handler: handleOutboxEntryCreated
+      file: ./src/outbox.ts
